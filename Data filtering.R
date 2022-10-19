@@ -149,4 +149,18 @@ colnames(df2)=colnames(df1)
 
 df <- rbind(df1,df2)
 dim(df)
+set.seed(562653)
+df$Phone_Time <- round(runif(113,0,5),1)
+
+head(df)
+df$Phone_Time
+set.seed(5475)
+df$Workout_time <- round(runif(113,0,2),1)
+df$Workout_time
+
+
+
+df$Focus_Level <- rbinom(113,5,0.6)
+df$Focus_Level
+df
 write.csv(df,"Bidit_Life_data_tracking.csv")
