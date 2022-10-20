@@ -163,4 +163,20 @@ df$Workout_time
 df$Focus_Level <- rbinom(113,5,0.6)
 df$Focus_Level
 df
-write.csv(df,"Bidit_Life_data_tracking.csv")
+#write.csv(df,"Bidit_Life_data_tracking.csv")
+
+# Libraries
+library(ggplot2)
+library(dplyr)
+
+# Dummy data
+df$`On This Day` <-as.Date(df$`On This Day`,"%b%d,%Y")
+# Most basic bubble plot
+p <- ggplot(df, aes(x=`On This Day`, y=Phone_Time)) +
+  geom_line() + 
+  xlab("")
+p
+p4 <- table(df$Focus_Level)
+p2 <- as.factor(df$Focus_Level)
+barplot(p4)
+p4

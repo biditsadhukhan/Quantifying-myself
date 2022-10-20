@@ -1,6 +1,5 @@
 ---
 title: "What does Self-Tracking for 4 months reveal about myself ?"
-
 author: "Bidit Sadhukhan"
 date: "`r Sys.Date()`"
 output: 
@@ -11,4 +10,3 @@ output:
     fig_caption: yes
     number_sections: yes
 ---
-
