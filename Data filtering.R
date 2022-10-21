@@ -5,6 +5,7 @@ rm(list = ls())
 date <- as.Date("oct29,2021","%b%d,%Y")
 col1_temp <- seq(date,by="day",length.out=70)
 col1 <- format(col1_temp,"%b%d,%Y")
+str(col1)
 
 # Getting weekdays name
 library(lubridate)
@@ -180,3 +181,6 @@ p4 <- table(df$Focus_Level)
 p2 <- as.factor(df$Focus_Level)
 barplot(p4)
 p4
+
+install.packages("margrittr")
+ggplot(df)+geom_bar(mapping = aes(x=Focus.Level..1.worst.5.best.),y=Meditation,position ="stack" )
