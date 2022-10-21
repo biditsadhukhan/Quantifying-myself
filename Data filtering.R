@@ -166,6 +166,7 @@ df$Focus_Level
 df
 #write.csv(df,"Bidit_Life_data_tracking.csv")
 
+# Rough work
 # Libraries
 library(ggplot2)
 library(dplyr)
@@ -184,3 +185,81 @@ p4
 
 install.packages("margrittr")
 ggplot(df)+geom_bar(mapping = aes(x=Focus.Level..1.worst.5.best.),y=Meditation,position ="stack" )
+
+q <- table(df$Focus.Level..1.worst.5.best.,df$Meditation)
+q_prop <- round(prop.table(q),2)
+p <- addmargins(q_prop)
+p 
+z <- data.frame(q_prop)
+ggplot(z, aes(fill=Var1, y=Freq, x=Var2)) +
+  geom_bar(position="dodge", stat="identity")+theme_light() + geom_text(aes(label = Freq), fontface = "bold", vjust = 1.5,
+                                                                        position = position_dodge(.9), size = 4)
+
+
+library(plotly)
+
+fig <- plot_ly()
+# Add traces
+fig <- fig %>% add_trace(x = df$On.This.Day, y = df$Meditation, name = "yaxis data", mode = "lines+markers", type = "scatter")
+
+ay <- list(
+  tickfont = list(color = "red"),
+  overlaying = "y",
+  side = "right",
+  title = "<b>secondary</b> yaxis title")
+
+fig <- fig %>% add_trace(x = df$On.This.Day, y = df$Focus.Level..1.worst.5.best., name = "yaxis 2 data", yaxis = "y2", mode = "lines+markers", type = "scatter")
+
+# Set figure title, x and y-axes titles
+fig <- fig %>% layout(
+  title = "Double Y Axis Example", yaxis2 = ay,
+  xaxis = list(title="xaxis title "),
+  yaxis = list(title="<b>primary</b> yaxis title")
+)%>%
+  layout(plot_bgcolor='#e5ecf6',
+         xaxis = list(
+           zerolinecolor = '#ffff',
+           zerolinewidth = 2,
+           gridcolor = 'ffff'),
+         yaxis = list(
+           zerolinecolor = '#ffff',
+           zerolinewidth = 2,
+           gridcolor = 'ffff')
+  )
+
+fig
+
+chisq.test(p)$expected
+
+set.seed(90)
+df$Focus<- round(sample(rgamma(200,50,rate=2),113),0)
+dim(df)
+df[which(df$Meditation=="Yes" & df$Exercise=="Yes"),]
+
+p <- ggplot(df, aes(x = On.This.Day, y =Focus, group = Meditation)) +
+  geom_point(aes(color = Meditation))+
+  geom_line(aes(color = Meditation))+
+  ggtitle("Meditation and Focus Time")
+
+ggplotly(p)
+
+table(df$Meditation)
+df_cond_2 <- df[df$Meditation=="Yes" & df$Focus >25,]
+df_cond_1 <- df[df$Focus >25,]
+no_meditation <- df_cond_1[,c(1,27)]
+dim(no_meditation)
+addmargins(table(df_cond_1$Meditation,df_cond_1$Focus))
+set.seed(90)
+df$Meditation_time <- rbinom(113,116,0.1)
+df$Meditation_time
+df$Reading_time <- rbinom(113,125,0.2)
+df$Reading_time
+plot(df$Reading_time,df$Focus)
+
+
+
+df$Meditation
+levels(df$Meditation) = c("1","0")
+df$Meditation
+levels(df$Meditation) = c("Yes","No")
+

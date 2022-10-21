@@ -20,6 +20,7 @@ library(magrittr)
 library(plotly)
 library(ggpubr)
 library(patchwork)
+library(ggmosaic)
 ```
 
 ## Importing Data
@@ -40,7 +41,7 @@ df %<>%
 str(df)
 ```
 
-```{r,Building the contingency tables,fig.width=10,fig.show='hide'}
+```{r,Building the contingency tables for Meditation,fig.width=7}
 q <- table(df$Focus.Level..1.worst.5.best.,df$Meditation)
 q_prop <- round(prop.table(q,margin = 2),2)*100
 p <- addmargins(q)
@@ -74,19 +75,244 @@ fig1
 ```
 
 
-```{r,barplot of meditation&focus,fig.width=10,fig.cap="Meditation on Focus Time",fig.show='hide'}
+```{r,barplot of meditation&focus,fig.width=10}
 plot_1 <-ggplot(z, aes(fill=Meditation_Status, y=Count, x=Focus_Level)) +
-  geom_bar(position="dodge", stat="identity",colour="black")+theme_minimal() + geom_text(aes(label = paste(Count,"%",sep = "")), fontface = "bold", vjust = 1.5, position = position_dodge(0.9), size = 4)+scale_x_discrete(labels=c("<=10 mins","10 to 30 mins","30 to 60 mins","60 to 90 mins",">90 mins"))+xlab("Focus Time")+ylab("Percentage")+labs(title="EFFECT OF MEDITATION ON FOCUS TIME",caption = "Data Source:Bidit Personal Notion Database",tag = "Figure-1",fill="Meditation Done")+coord_flip()
-fig2 <- ggplotly(plot_1)
-fig2
+  geom_bar(position="dodge", stat="identity",colour="black")+theme_minimal() + geom_text(aes(label = paste(Count,"%",sep = "")), fontface = "bold", vjust = .5, position = position_dodge(0.9), size = 4)+scale_x_discrete(labels=c("<=10 mins","10 to 30 mins","30 to 60 mins","60 to 90 mins",">90 mins"))+xlab("Focus Time")+ylab("Percentage")+labs(title="EFFECT OF MEDITATION ON FOCUS TIME",caption = "Data Source:Bidit Personal Notion Database",tag = "Figure-1",fill="Meditation Done")+coord_flip()
+plot_1
 
+
+
+```
+
+
+```{r,Exercise vs Focus,fig.width=7}
+q1 <- table(df$Focus.Level..1.worst.5.best.,df$Exercise)
+q1_prop <- round(prop.table(q1,margin = 2),2)*100
+p1 <- addmargins(q1)
+rownames(p1) <- c("<=10min","10 to 30 mins","30 to 60 mins","60 to 90 mins",">90 mins","Sum")
+t1 <- as.matrix(p1)
+z1 <- data.frame(q1_prop)
+colnames(z1) <- c("Focus_Level","Exercise_Status","Count")
+
+fig3 <- plot_ly(
+  type = 'table',
+  header = list(
+    values = c("<b>Focussed Time</b>", "<b>Exercise:No</b>","<b>Exercise:Yes</b>","<b>Sum</b>"),
+  align = c('left', rep('center', ncol(t1))),
+  line = list(width = 1, color = 'black'),
+  fill = list(color = 'rgb(235, 100, 230)'),
+  font = list(family = "Arial", size = 14, color = "white")
+  ),
+  cells = list(
+    values = rbind(
+      rownames(t1), 
+      t(as.matrix(unname(t1)))
+    ),
+    align = c('left', rep('center', ncol(t))),
+    line = list(color = "black", width = 1),
+    fill = list(color = c('rgb(235, 193, 238)', 'rgba(228, 222, 249, 0.65)')),
+    font = list(family = "Arial", size = 12, color = c("black"))
+  ))
+
+fig3
 
 ```
 
 
-```{r}
+```{r,Barplot of Exercise vs Focus time,fig.width=10}
+plot_2 <-ggplot(z1, aes(fill=Exercise_Status, y=Count, x=Focus_Level)) +
+  geom_bar(position="dodge", stat="identity",colour="black")+theme_minimal() + geom_text(aes(label = paste(Count,"%",sep = "")), fontface = "bold", vjust = .5, position = position_dodge(0.9), size = 4)+scale_x_discrete(labels=c("<=10 mins","10 to 30 mins","30 to 60 mins","60 to 90 mins",">90 mins"))+xlab("Focus Time")+ylab("Percentage")+labs(title="EFFECT OF EXERCISE ON FOCUS TIME",caption = "Data Source:Bidit Personal Notion Database",tag = "Figure-2",fill="Exercise Done")+coord_flip()
+plot_2
+```
+
+```{r,Focus time vs Reading contingency table,fig.width=7}
+q2 <- table(df$Focus.Level..1.worst.5.best.,df$Reading..Doesn.t.include.Studying.)
+q2_prop <- round(prop.table(q2,margin = 2),2)*100
+p2 <- addmargins(q2)
+rownames(p2) <- c("<=10min","10 to 30 mins","30 to 60 mins","60 to 90 mins",">90 mins","Sum")
+t2 <- as.matrix(p2)
+z2 <- data.frame(q2_prop)
+colnames(z2) <- c("Focus_Level","Reading_Status","Count")
+
+fig3 <- plot_ly(
+  type = 'table',
+  header = list(
+    values = c("<b>Focussed Time</b>", "<b>Reading:No</b>","<b>Reading:Yes</b>","<b>Sum</b>"),
+  align = c('left', rep('center', ncol(t2))),
+  line = list(width = 1, color = 'black'),
+  fill = list(color = 'rgb(235, 100, 230)'),
+  font = list(family = "Arial", size = 14, color = "white")
+  ),
+  cells = list(
+    values = rbind(
+      rownames(t2), 
+      t(as.matrix(unname(t2)))
+    ),
+    align = c('left', rep('center', ncol(t2))),
+    line = list(color = "black", width = 1),
+    fill = list(color = c('rgb(235, 193, 238)', 'rgba(228, 222, 249, 0.65)')),
+    font = list(family = "Arial", size = 12, color = c("black"))
+  ))
+
+fig3
+```
+
+```{r,Barplot of Reading vs Focus Time,fig.width=7}
+plot_3 <-ggplot(z2, aes(fill=Reading_Status, y=Count, x=Focus_Level)) +
+  geom_bar(position="dodge", stat="identity",colour="black")+theme_minimal() + geom_text(aes(label = paste(Count,"%",sep = "")), fontface = "bold", vjust = .5, position = position_dodge(0.9), size = 4)+scale_x_discrete(labels=c("<=10 mins","10 to 30 mins","30 to 60 mins","60 to 90 mins",">90 mins"))+xlab("Focus Time")+ylab("Percentage")+labs(title="EFFECT OF READING ON FOCUS TIME",caption = "Data Source:Bidit Personal Notion Database",tag = "Figure-3",fill="Reading Done")+coord_flip()
+plot_3
+```
+
+```{r,contingency table for mindset vs focus time,fig.width=7}
+q3 <- table(df$Focus.Level..1.worst.5.best.,df$Mindset.Motivated.Yes.Lazy.No.)
+q3_prop <- round(prop.table(q3,margin = 2),2)*100
+p3 <- addmargins(q3)
+rownames(p3) <- c("<=10min","10 to 30 mins","30 to 60 mins","60 to 90 mins",">90 mins","Sum")
+t3 <- as.matrix(p3)
+z3 <- data.frame(q3_prop)
+colnames(z3) <- c("Focus_Level","Mindset_Status","Count")
+
+fig4 <- plot_ly(
+  type = 'table',
+  header = list(
+    values = c("<b>Focussed Time</b>", "<b>Mindest Positive:No</b>","<b>Mindset Positive:Yes</b>","<b>Sum</b>"),
+  align = c('left', rep('center', ncol(t2))),
+  line = list(width = 1, color = 'black'),
+  fill = list(color = 'rgb(235, 100, 230)'),
+  font = list(family = "Arial", size = 14, color = "white")
+  ),
+  cells = list(
+    values = rbind(
+      rownames(t3), 
+      t(as.matrix(unname(t3)))
+    ),
+    align = c('left', rep('center', ncol(t2))),
+    line = list(color = "black", width = 1),
+    fill = list(color = c('rgb(235, 193, 238)', 'rgba(228, 222, 249, 0.65)')),
+    font = list(family = "Arial", size = 12, color = c("black"))
+  ))
+
+fig4
+```
+```{r,barplot of mindset vs focus time,fig.width=7}
+plot_4 <-ggplot(z3, aes(fill=Mindset_Status, y=Count, x=Focus_Level)) +
+  geom_bar(position="dodge", stat="identity",colour="black")+theme_minimal() + geom_text(aes(label = paste(Count,"%",sep = "")), fontface = "bold", vjust = .5, position = position_dodge(0.9), size = 4)+scale_x_discrete(labels=c("<=10 mins","10 to 30 mins","30 to 60 mins","60 to 90 mins",">90 mins"))+xlab("Focus Time")+ylab("Percentage")+labs(title="EFFECT OF MINDSET ON FOCUS TIME",caption = "Data Source:Bidit Personal Notion Database",tag = "Figure-4",fill="Mindset Positive")+coord_flip()
+plot_4
+```
+
+```{r,Diet levels and Focus time,fig.width=7}
+q4 <- table(df$Focus.Level..1.worst.5.best.,df$Diet..1..worst..to.5..best.)
+q4_prop <- round(prop.table(q4,margin = 2),2)*100
+p4 <- addmargins(q4)
+rownames(p4) <- c("<=10min","10 to 30 mins","30 to 60 mins","60 to 90 mins",">90 mins","Sum")
+t4 <- as.matrix(p4)
+z4 <- data.frame(q4_prop)
+colnames(z4) <- c("Focus_Level","Diet_Level","Count")
+
+fig5 <- plot_ly(
+  type = 'table',
+  header = list(
+    values = c("<b>Focussed Time</b>", "<b>Diet Levels:1</b>","<b>2</b>","<b>3</b>","<b>4</b>","<b>5</b>","<b>Sum</b>"),
+  align = c('left', rep('center', ncol(t4))),
+  line = list(width = 1, color = 'black'),
+  fill = list(color = 'rgb(235, 100, 230)'),
+  font = list(family = "Arial", size = 14, color = "white")
+  ),
+  cells = list(
+    values = rbind(
+      rownames(t4), 
+      t(as.matrix(unname(t4)))
+    ),
+    align = c('left', rep('center', ncol(t4))),
+    line = list(color = "black", width = 1),
+    fill = list(color = c('rgb(235, 193, 238)', 'rgba(228, 222, 249, 0.65)')),
+    font = list(family = "Arial", size = 12, color = c("black"))
+  ))
+
+fig5
 
 ```
-```{r}
 
+```{r,barplot of Diet level vs focus time ,fig.width=10,fig.show='hide'}
+plot_5 <-ggplot(z4, aes(fill=Diet_Level, y=Count, x=Focus_Level)) +
+  geom_bar(position="dodge", stat="identity",colour="black")+theme_minimal() + geom_text(aes(label = paste(Count,"%",sep = "")), fontface = "bold", vjust = .5, position = position_dodge(0.9), size = 3)+scale_x_discrete(labels=c("<=10 mins","10 to 30 mins","30 to 60 mins","60 to 90 mins",">90 mins"))+xlab("Focus Time")+ylab("Percentage")+labs(title="EFFECT OF DIET LEVEL ON FOCUS TIME",caption = "Data Source:Bidit Personal Notion Database",tag = "Figure-5",fill="Diet Level(1=Worst,5=Best)")+coord_flip()
+plot_5
+```
+
+```{r,mosaic plot of diet level by focus time,message=FALSE,warning=FALSE}
+ggplot(data = df) +
+  geom_mosaic(aes(x = product(Diet..1..worst..to.5..best., Focus.Level..1.worst.5.best.), fill = Diet..1..worst..to.5..best.),
+              na.rm=TRUE) + 
+  labs(x = "Focus Level", 
+       y = "Proportion", 
+       title="Focus Time by Diet Levels",
+       subtitle = "Left - Right = (1) <10 mins - (5) >90 mins",
+       caption = "Data Source:Bidit Notion Personal Database",
+       tag="Fig-5") +
+  scale_fill_manual(values=c("#440145FF", "#404788FF", "#238A8DFF", "#55C667FF", "#FDE725FF"), 
+                    name="Diet Levels",
+                    breaks=c("1", "2", "3", "4", "5"),
+                    labels=c("1 - Worst", "2", "3", "4", "5 - Best")) +
+  theme_minimal() +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank())
+```
+
+```{r,contingency table of health condition vs Focus Level}
+q5 <- table(df$Focus.Level..1.worst.5.best.,df$Health.Condition..5.Best..1.worst.)
+q5_prop <- round(prop.table(q5,margin = 2),2)*100
+p5 <- addmargins(q5)
+rownames(p5) <- c("<=10min","10 to 30 mins","30 to 60 mins","60 to 90 mins",">90 mins","Sum")
+t5 <- as.matrix(p5)
+z5 <- data.frame(q5_prop)
+colnames(z5) <- c("Focus_Level","Health_Condition","Count")
+
+fig6 <- plot_ly(
+  type = 'table',
+  header = list(
+    values = c("<b>Focussed Time</b>", "<b>Health Condition:1</b>","<b>2</b>","<b>3</b>","<b>4</b>","<b>5</b>","<b>Sum</b>"),
+  align = c('left', rep('center', ncol(t5))),
+  line = list(width = 1, color = 'black'),
+  fill = list(color = 'rgb(235, 100, 230)'),
+  font = list(family = "Arial", size = 14, color = "white")
+  ),
+  cells = list(
+    values = rbind(
+      rownames(t5), 
+      t(as.matrix(unname(t5)))
+    ),
+    align = c('left', rep('center', ncol(t5))),
+    line = list(color = "black", width = 1),
+    fill = list(color = c('rgb(235, 193, 238)', 'rgba(228, 222, 249, 0.65)')),
+    font = list(family = "Arial", size = 12, color = c("black"))
+  ))
+
+fig6
+```
+
+```{r,barplot of health condition vs focus time,fig.width=10,fig.height=8,fig.show='hide'}
+plot_6 <-ggplot(z5, aes(fill=Health_Condition, y=Count, x=Focus_Level)) +
+  geom_bar(position="dodge", stat="identity",colour="black")+theme_minimal() + geom_text(aes(label = paste(Count,"%",sep = "")), fontface = "bold", vjust = .5, position = position_dodge(0.9), size = 3)+scale_x_discrete(labels=c("<=10 mins","10 to 30 mins","30 to 60 mins","60 to 90 mins",">90 mins"))+xlab("Focus Time")+ylab("Percentage")+labs(title="EFFECT OF HEALTH CONDITION ON FOCUS TIME",caption = "Data Source:Bidit Personal Notion Database",tag = "Figure-6",fill="Health Condition(1=Worst,5=Best)")+coord_flip()
+plot_6
+
+```
+
+
+```{r,message=FALSE,warning=FALSE}
+ggplot(data = df) +
+  geom_mosaic(aes(x = product(Health.Condition..5.Best..1.worst., Focus.Level..1.worst.5.best.), fill = Health.Condition..5.Best..1.worst.),
+              na.rm=TRUE) + 
+  labs(x = "Focus Level", 
+       y = "Proportion", 
+       title="Focus Time by Health Condition",
+       subtitle = "Left - Right = (1) <10 mins - (5) >90 mins",
+       caption = "Data Source:Bidit Notion Personal Database",
+       tag="Fig-7") +
+  scale_fill_manual(values=c("#440145FF", "#404788FF", "#238A8DFF", "#55C667FF", "#FDE725FF"), 
+                    name="Health Condition",
+                    breaks=c("1", "2", "3", "4", "5"),
+                    labels=c("1 - Worst", "2", "3", "4", "5 - Best")) +
+  theme_minimal() +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank())
 ```
