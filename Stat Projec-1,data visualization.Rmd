@@ -40,8 +40,15 @@ df %<>%
   mutate_at(c,factor)
 str(df)
 ```
+## A summary of my habits health and mentality
+### Health
+```{r,Barplot of the habits,fig.width=5}
+mindset <- table(df$Mindset.Motivated.Yes.Lazy.No.)
+barplot(mindset,xlab="Mindset",ylab="Number of days",main="Positive Mindset in 113 days",ylim=c(0,113),cex.main =1,cex.lab=1,col="lightblue",width = c(0.1))
+```
 
-```{r,Building the contingency tables for Meditation,fig.width=7}
+
+```{r,Building the contingency tables for Meditation,fig.width=5}
 q <- table(df$Focus.Level..1.worst.5.best.,df$Meditation)
 q_prop <- round(prop.table(q,margin = 2),2)*100
 p <- addmargins(q)
@@ -307,7 +314,7 @@ ggplot(data = df) +
        title="Focus Time by Health Condition",
        subtitle = "Left - Right = (1) <10 mins - (5) >90 mins",
        caption = "Data Source:Bidit Notion Personal Database",
-       tag="Fig-7") +
+       tag="Fig-6") +
   scale_fill_manual(values=c("#440145FF", "#404788FF", "#238A8DFF", "#55C667FF", "#FDE725FF"), 
                     name="Health Condition",
                     breaks=c("1", "2", "3", "4", "5"),
