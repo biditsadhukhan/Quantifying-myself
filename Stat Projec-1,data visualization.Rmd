@@ -1,5 +1,5 @@
 ---
-title: "Should I consider myself productive ?"
+title: "What does Self Tracking reveal about me and my focus time ?"
 author: "Bidit Sadhukhan"
 date: "`r Sys.Date()`"
 output: 
@@ -29,7 +29,6 @@ df <- read.csv("Bidit_Life_data_tracking.csv",header = T, stringsAsFactors = T )
 ```
 ```{r,Data Filtering,include=FALSE}
 dim(df)
-na.omit(df)
 df$On.This.Day <- as.Date(df$On.This.Day,"%b%d,%Y")
 df$Day <- weekdays(df$On.This.Day)
 x=5:1
@@ -43,11 +42,11 @@ str(df)
 
 
 ## A short overview on my habits,health and mindset
-### Overall Mindset & Mood
+###  Mindset,Mood & Focus
 
 
 
-```{r,Barplot of the habits,fig.width=7}
+```{r,Barplot of the habits,fig.width=8,fig.height=8}
 mindset <- data.frame(table(df$Mindset.Motivated.Yes.Lazy.No.))
 basic_1 <-ggplot(mindset, aes(y=Freq, x=Var1)) +
   geom_bar(position="dodge", stat="identity",fill="#FFCC66")+theme_minimal() + geom_text(aes(label = Freq), fontface = "bold", vjust = .5, position = position_dodge(0.9), size = 4)+scale_x_discrete(labels=c("No","Yes"))+xlab("Mindset is Positive")+ylab("Count")+ylim(0,113)
@@ -56,12 +55,21 @@ basic_1 <-ggplot(mindset, aes(y=Freq, x=Var1)) +
 positivity <- data.frame(table(df$Positivity..1.worst.5.best.))
 colnames(positivity) <- c("Mood_Rating","Count")
 basic_2 <-ggplot(positivity, aes(y=Count, x=Mood_Rating)) +
-  geom_bar(position="dodge", stat="identity",fill="#FFCC66")+theme_minimal() + geom_text(aes(label = Count), fontface = "bold", vjust = .5, position = position_dodge(0.9), size = 4)+scale_x_discrete(labels=c("1","2","3","4","5"))+xlab("Mood Rating")+ylab("Count")+ylim(0,113)
+  geom_bar(position="dodge", stat="identity",fill="#FFCC66")+theme_minimal() + geom_text(aes(label = Count), fontface = "bold", vjust = .5, position = position_dodge(0.9), size = 4)+scale_x_discrete(labels=c("Worst","Bad","Moderate","Good","Too Good"))+xlab("Mood Rating")+ylab("Count")+ylim(0,113)
+
+focus <- data.frame(table(df$Focus.Level..1.worst.5.best.))
+focus_plot <- ggplot(focus, aes(y=Freq, x=Var1)) +
+  geom_bar(position="dodge", stat="identity",fill="#FFCC66")+theme_minimal() + geom_text(aes(label = Freq), fontface = "bold", vjust = .5, position = position_dodge(0.9), size = 4)+scale_x_discrete(labels=c("<10mins","10 to 30 mins","30 to 60 mins","60 to 90 mins",">90mins"))+xlab("Focus Time")+ylab("Count")+ylim(0,113)
 
 
-
-figure <- ggarrange(basic_1,basic_2,ncol=2)
-annotate_figure(figure, top = text_grob("Visualizing Mood and Mindset",
+figure <- ggarrange(
+  focus_plot,                # First row
+  # Second Row
+  ggarrange(basic_1, basic_2, ncol = 2, labels = c("Mindset", "Mood")), 
+  nrow = 2, 
+  labels = "Focus Time"       # Label of the plot
+  ) 
+annotate_figure(figure, top = text_grob("Visualizing Mood,Mindset & Focus Time",
                   color = "red", face = "bold", size = 14),
   bottom = text_grob("Data source:Bidit Personal Notion Database", color = "black",
                      hjust = 1, x = 1, face = "italic", size = 10),
@@ -69,8 +77,126 @@ annotate_figure(figure, top = text_grob("Visualizing Mood and Mindset",
   )
 ```
 
+### Health
 
-```{r,Building the contingency tables for Meditation,fig.width=5}
+```{r,health condition basic plot,fig.width=8,fig.height=8}
+#exercise
+exercise <- data.frame(table(df$Exercise))
+colnames(exercise) <- c("Exercise","Frequency1")
+exercise_plot <- ggplot(exercise, aes(y=Frequency1, x=Exercise)) +
+  geom_bar(position="dodge", stat="identity",fill="#FF6666")+theme_minimal() + geom_text(aes(label = Frequency1), fontface = "bold", vjust = .5, position = position_dodge(0.9), size = 4)+scale_x_discrete(labels=c("No","Yes"))+xlab("Exercise")+ylab("Count")+ylim(0,113)
+
+#health
+health_condition <- data.frame(table(df$Health.Condition..5.Best..1.worst.))
+colnames(health_condition) <- c("Health","Frequency2")
+health_condition_plot <- ggplot(health_condition, aes(y=Frequency2, x=Health)) +
+  geom_bar(position="dodge", stat="identity",fill="#FF6666")+theme_minimal() + geom_text(aes(label = Frequency2), fontface = "bold", vjust = .5, position = position_dodge(0.9), size = 4)+scale_x_discrete(labels=c("Extremely Sick","Sick","OK","Good","Healthy,Energetic"))+xlab("Health Condition")+ylab("Count")+ylim(0,113)
+
+#diet calculations
+diet <- data.frame(table(df$Diet..1..worst..to.5..best.))
+colnames(diet) <- c("Diet","Frequency3")
+
+diet_plot <- ggplot(diet, aes(y=Frequency3, x=Diet)) +
+  geom_bar(position="dodge", stat="identity",fill="#FF6666")+theme_minimal() + geom_text(aes(label = Frequency3), fontface = "bold", vjust = .5, position = position_dodge(0.9), size = 4)+scale_x_discrete(labels=c("Junk","Unbalanced","OK","Healthly","Balanced"))+xlab("Diet Level")+ylab("Count")+ylim(0,113)
+
+#plotting
+figure1 <- ggarrange(
+  health_condition_plot,                # First row with line plot
+  # Second row with box and dot plots
+  ggarrange(exercise_plot, diet_plot, ncol = 2, labels = c("Exercise ", "Diet Levels")), 
+  nrow = 2, 
+  labels = "Health"       # Label of the line plot
+  ) 
+annotate_figure(figure1, top = text_grob("Visualizing Health,Diet & Exercise",
+                  color = "red", face = "bold", size = 14),
+  bottom = text_grob("Data source:Bidit Personal Notion Database", color = "black",
+                     hjust = 1, x = 1, face = "italic", size = 10),
+  fig.lab = "Figure 2", fig.lab.face = "bold"
+  )
+
+```
+
+
+
+```{r,Water consumption,Avg Sleep,Workout time,workout time,fig.width=9,fig.height=8}
+#water consumption calculation
+# Creating the month coloumn
+df$Month <- format(df$On.This.Day,"%b")
+water_consumption <- data.frame(tapply(df$Water.Consumption.in.litre.,df$Month,mean))
+df2 <- na.omit(df)   # omitting na values in workout time
+water_grandmean <- round(mean(df$Water.Consumption.in.litre.),1)
+water_consumption_plot <- ggplot(df,aes(x=Month, y=Water.Consumption.in.litre.,fill=Month))+geom_boxplot(alpha=0.3)+theme(legend.position = "none")+scale_fill_brewer(palette = "Dark2")+ylab(" Drinking Water Consumption (in litre)")+geom_hline(aes(yintercept=water_grandmean),colour="#6666CC",lwd=1)+geom_text(aes(0,water_grandmean,label= paste("Average/day",water_grandmean,sep = ":"),vjust=-1,hjust=0),colour="#6666FF")+stat_summary(fun = mean,geom="point",shape=20,size=5,color="red",fill="red")
+
+#Workout calculation
+workout_time <- data.frame(tapply(df2$Workout.time.in.mins.,df2$Month,mean))
+workout_grandmean <- round(mean(df2$Workout.time.in.mins.),1)
+
+workout_time_plot <- ggplot(df2,aes(x=Month, y=Workout.time.in.mins.,fill=Month))+geom_boxplot(alpha=0.3)+theme(legend.position = "none")+scale_fill_brewer(palette = "Dark2")+ylab("Workout Time (in hour)")+geom_hline(aes(yintercept=workout_grandmean),colour="#6666CC",lwd=1)+geom_text(aes(0,workout_grandmean,label= paste("Average/day",workout_grandmean,sep = ":"),vjust=-1,hjust=0),colour="#6666FF")+stat_summary(fun = mean,geom="point",shape=20,size=5,color="red",fill="red")
+
+#sleep time calculation
+sleep_grandmean <- round(mean(df$Sleep.Time.day),1)
+sleep_time_plot <- ggplot(df,aes(x=Month, y=Sleep.Time.day,fill=Month))+geom_boxplot(alpha=0.3)+theme(legend.position = "none")+scale_fill_brewer(palette = "Dark2")+ylab("Sleeping Time(in hour)")+geom_hline(aes(yintercept=sleep_grandmean),colour="#6666CC",lwd=1)+geom_text(aes(0,sleep_grandmean,label= paste("Average/day",sleep_grandmean,sep = ":"),vjust=2,hjust=0),colour="#6666FF")+stat_summary(fun = mean,geom="point",shape=20,size=5,color="red",fill="red")
+
+#plotting
+figure2 <- ggarrange(
+  water_consumption_plot,                # First row with line plot
+  # Second row with box and dot plots
+  ggarrange(workout_time_plot, sleep_time_plot, ncol = 2, labels = c("Workout Time", "Sleeping Time")), 
+  nrow = 2, 
+  labels = " Drinking Water Consumption"       # Label of the line plot
+  ) 
+annotate_figure(figure2, top = text_grob("Visualizing Daily Essential Needs & Activities",
+                  color = "red", face = "bold", size = 14),
+  bottom = text_grob("Data source:Bidit Personal Notion Database", color = "black",
+                     hjust = 1, x = 1, face = "italic", size = 10),
+  fig.lab = "Figure 2", fig.lab.face = "bold"
+  )
+
+```
+
+### Hobbies & Extra-Curricular Activities
+```{r,meditation-reading-phone time-morning prayer,fig.width=9,fig.height=8}
+#meditation
+meditation <- data.frame(table(df$Meditation))
+colnames(meditation) <- c("Medi","Frequencymed")
+meditation_plot <- ggplot(meditation, aes(y=Frequencymed, x=Medi)) +
+  geom_bar(position="dodge", stat="identity",fill="#CCFF00")+theme_minimal() + geom_text(aes(label = Frequencymed), fontface = "bold", vjust = .5, position = position_dodge(0.9), size = 4)+scale_x_discrete(labels=c("No","Yes"))+xlab("Meditation")+ylab("Count")+ylim(0,113)
+
+#reading
+reading <- data.frame(table(df$Reading..Doesn.t.include.Studying.))
+colnames(reading) <- c("Reading","Frequencyread")
+reading_plot <- ggplot(reading, aes(y=Frequencyread, x=Reading)) +
+  geom_bar(position="dodge", stat="identity",fill="#CCFF00")+theme_minimal() + geom_text(aes(label = Frequencyread), fontface = "bold", vjust = .5, position = position_dodge(0.9), size = 4)+scale_x_discrete(labels=c("No","Yes"))+xlab("Reading")+ylab("Count")+ylim(0,113)
+
+#morning prayer
+prayer <- data.frame(table(df$Morning.Prayer))
+colnames(prayer) <- c("Prayer","Frequencypray")
+prayer_plot <- ggplot(prayer, aes(y=Frequencypray, x=Prayer)) +
+  geom_bar(position="dodge", stat="identity",fill="#CCFF00")+theme_minimal() + geom_text(aes(label = Frequencypray), fontface = "bold", vjust = .5, position = position_dodge(0.9), size = 4)+scale_x_discrete(labels=c("No","Yes"))+xlab("Morning Prayer")+ylab("Count")+ylim(0,113)
+
+# Phone time
+phone_grandmean <- round(mean(df$Phone.Time.in.mins.),1)
+phone_time_plot <- ggplot(df,aes(x=Month, y=Phone.Time.in.mins.,fill=Month))+geom_boxplot(alpha=0.3)+theme(legend.position = "none")+scale_fill_brewer(palette = "Dark2")+ylab("Phone Usage Time(in hour)")+geom_hline(aes(yintercept=phone_grandmean),colour="#6666CC",lwd=1)+geom_text(aes(0,phone_grandmean,label= paste("Average/day",phone_grandmean,sep = ":"),vjust=1,hjust=0),colour="#6666FF")+stat_summary(fun = mean,geom="point",shape=20,size=5,color="red",fill="red")
+
+#plotting
+figure3 <- ggarrange(
+  phone_time_plot,                # First row with line plot
+  # Second row with box and dot plots
+  ggarrange(meditation_plot, reading_plot, ncol = 2, labels = c("Meditation", "Reading")), 
+  nrow = 2, 
+  labels = " Phone Usage Time"       # Label of the line plot
+  ) 
+annotate_figure(figure3, top = text_grob("Visualizing Daily Essential Needs & Activities",
+                  color = "red", face = "bold", size = 14),
+  bottom = text_grob("Data source:Bidit Personal Notion Database", color = "black",
+                     hjust = 1, x = 1, face = "italic", size = 10),
+  fig.lab = "Figure 2", fig.lab.face = "bold"
+  )
+```
+
+## Activities,Health & Mindset  on Focus Time
+### Meditation on Focus Time
+```{r,Building the contingency tables for Meditation,fig.width=5,fig.height=5}
 q <- table(df$Focus.Level..1.worst.5.best.,df$Meditation)
 q_prop <- round(prop.table(q,margin = 2),2)*100
 p <- addmargins(q)
@@ -113,6 +239,7 @@ plot_1
 
 ```
 
+### Exercise on Focus Time
 
 ```{r,Exercise vs Focus,fig.width=7}
 q1 <- table(df$Focus.Level..1.worst.5.best.,df$Exercise)
@@ -154,6 +281,8 @@ plot_2 <-ggplot(z1, aes(fill=Exercise_Status, y=Count, x=Focus_Level)) +
 plot_2
 ```
 
+
+### Reading on Focus Time
 ```{r,Focus time vs Reading contingency table,fig.width=7}
 q2 <- table(df$Focus.Level..1.worst.5.best.,df$Reading..Doesn.t.include.Studying.)
 q2_prop <- round(prop.table(q2,margin = 2),2)*100
@@ -192,6 +321,7 @@ plot_3 <-ggplot(z2, aes(fill=Reading_Status, y=Count, x=Focus_Level)) +
 plot_3
 ```
 
+### Mindset on Focus time
 ```{r,contingency table for mindset vs focus time,fig.width=7}
 q3 <- table(df$Focus.Level..1.worst.5.best.,df$Mindset.Motivated.Yes.Lazy.No.)
 q3_prop <- round(prop.table(q3,margin = 2),2)*100
@@ -229,6 +359,7 @@ plot_4 <-ggplot(z3, aes(fill=Mindset_Status, y=Count, x=Focus_Level)) +
 plot_4
 ```
 
+### Diet on Focus time
 ```{r,Diet levels and Focus time,fig.width=7}
 q4 <- table(df$Focus.Level..1.worst.5.best.,df$Diet..1..worst..to.5..best.)
 q4_prop <- round(prop.table(q4,margin = 2),2)*100
@@ -287,6 +418,7 @@ ggplot(data = df) +
         panel.grid.minor = element_blank())
 ```
 
+### Health Condition on Focus Time
 ```{r,contingency table of health condition vs Focus Level}
 q5 <- table(df$Focus.Level..1.worst.5.best.,df$Health.Condition..5.Best..1.worst.)
 q5_prop <- round(prop.table(q5,margin = 2),2)*100
@@ -341,6 +473,58 @@ ggplot(data = df) +
                     name="Health Condition",
                     breaks=c("1", "2", "3", "4", "5"),
                     labels=c("1 - Worst", "2", "3", "4", "5 - Best")) +
+  theme_minimal() +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank())
+```
+
+### Mood on Focus Time
+```{r,contingency table of mood on focus time}
+
+q6 <- table(df$Focus.Level..1.worst.5.best.,df$Positivity..1.worst.5.best.)
+q6_prop <- round(prop.table(q6,margin = 2),2)*100
+p6 <- addmargins(q6)
+rownames(p6) <- c("<=10min","10 to 30 mins","30 to 60 mins","60 to 90 mins",">90 mins","Sum")
+t6 <- as.matrix(p6)
+z6 <- data.frame(q6_prop)
+colnames(z6) <- c("Focus_Level","Health_Condition","Count")
+
+fig7 <- plot_ly(
+  type = 'table',
+  header = list(
+    values = c("<b>Focussed Time</b>", "<b>Mood Rating:1</b>","<b>2</b>","<b>3</b>","<b>4</b>","<b>5</b>","<b>Sum</b>"),
+  align = c('left', rep('center', ncol(t5))),
+  line = list(width = 1, color = 'black'),
+  fill = list(color = 'rgb(235, 100, 230)'),
+  font = list(family = "Arial", size = 14, color = "white")
+  ),
+  cells = list(
+    values = rbind(
+      rownames(t6), 
+      t(as.matrix(unname(t6)))
+    ),
+    align = c('left', rep('center', ncol(t6))),
+    line = list(color = "black", width = 1),
+    fill = list(color = c('rgb(235, 193, 238)', 'rgba(228, 222, 249, 0.65)')),
+    font = list(family = "Arial", size = 12, color = c("black"))
+  ))
+
+fig7
+```
+```{r,mosaic plot of mood on focus time,message=FALSE,warning=FALSE}
+ggplot(data = df) +
+  geom_mosaic(aes(x = product(Positivity..1.worst.5.best., Focus.Level..1.worst.5.best.), fill = Positivity..1.worst.5.best.),
+              ) + 
+  labs(x = "Focus Level", 
+       y = "Proportion", 
+       title="Focus Time by Mood",
+       subtitle = "Left - Right = (1) <10 mins - (5) >90 mins",
+       caption = "Data Source:Bidit Notion Personal Database",
+       tag="Fig-6") +
+  scale_fill_manual(values=c("#440145FF", "#404788FF", "#238A8DFF", "#55C667FF", "#FDE725FF"), 
+                    name="Mood",
+                    breaks=c("1","2","3","4","5"),
+                    labels=c("1-Worst","2-Bad","3-Moderate","4-Good","5-Too Good")) +
   theme_minimal() +
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank())
