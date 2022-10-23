@@ -1,5 +1,6 @@
 ---
 title: "What does Self Tracking reveal about me and my focus time ?"
+subtitle: "An extract of 113 days of my life"
 author: "Bidit Sadhukhan"
 date: "`r Sys.Date()`"
 output: 
@@ -121,21 +122,24 @@ annotate_figure(figure1, top = text_grob("Visualizing Health,Diet & Exercise",
 ```{r,Water consumption,Avg Sleep,Workout time,workout time,fig.width=9,fig.height=8}
 #water consumption calculation
 # Creating the month coloumn
-df$Month <- format(df$On.This.Day,"%b")
+df$Month <- as.factor(format(df$On.This.Day,"%b"))
+levels(df$Month) <- c(4,5,3,2,1) # Changing factor levels as the ordering is not same
 water_consumption <- data.frame(tapply(df$Water.Consumption.in.litre.,df$Month,mean))
 df2 <- na.omit(df)   # omitting na values in workout time
 water_grandmean <- round(mean(df$Water.Consumption.in.litre.),1)
-water_consumption_plot <- ggplot(df,aes(x=Month, y=Water.Consumption.in.litre.,fill=Month))+geom_boxplot(alpha=0.3)+theme(legend.position = "none")+scale_fill_brewer(palette = "Dark2")+ylab(" Drinking Water Consumption (in litre)")+geom_hline(aes(yintercept=water_grandmean),colour="#6666CC",lwd=1)+geom_text(aes(0,water_grandmean,label= paste("Average/day",water_grandmean,sep = ":"),vjust=-1,hjust=0),colour="#6666FF")+stat_summary(fun = mean,geom="point",shape=20,size=5,color="red",fill="red")
+water_consumption_plot <- ggplot(df,aes(x=Month, y=Water.Consumption.in.litre.,fill=Month))+geom_boxplot(alpha=0.3)+theme(legend.position = "none")+scale_fill_brewer(palette = "Dark2")+ylab(" Drinking Water Consumption (in litre)")+geom_hline(aes(yintercept=water_grandmean),colour="#6666CC",lwd=1)+geom_text(aes(0,water_grandmean,label= paste("Average/day",water_grandmean,sep = ":"),vjust=-1,hjust=0),colour="#6666FF")+stat_summary(fun = mean,geom="point",shape=20,size=5,color="red",fill="red")+scale_x_discrete(labels=c("Sep","Oct","Nov","Dec","Jan"))
 
 #Workout calculation
 workout_time <- data.frame(tapply(df2$Workout.time.in.mins.,df2$Month,mean))
 workout_grandmean <- round(mean(df2$Workout.time.in.mins.),1)
 
-workout_time_plot <- ggplot(df2,aes(x=Month, y=Workout.time.in.mins.,fill=Month))+geom_boxplot(alpha=0.3)+theme(legend.position = "none")+scale_fill_brewer(palette = "Dark2")+ylab("Workout Time (in hour)")+geom_hline(aes(yintercept=workout_grandmean),colour="#6666CC",lwd=1)+geom_text(aes(0,workout_grandmean,label= paste("Average/day",workout_grandmean,sep = ":"),vjust=-1,hjust=0),colour="#6666FF")+stat_summary(fun = mean,geom="point",shape=20,size=5,color="red",fill="red")
+workout_time_plot <- ggplot(df2,aes(x=Month, y=Workout.time.in.mins.,fill=Month))+geom_boxplot(alpha=0.3)+theme(legend.position = "none")+scale_fill_brewer(palette = "Dark2")+ylab("Workout Time (in hour)")+geom_hline(aes(yintercept=workout_grandmean),colour="#6666CC",lwd=1)+geom_text(aes(0,workout_grandmean,label= paste("Average/day",workout_grandmean,sep = ":"),vjust=-1,hjust=0),colour="#6666FF")+stat_summary(fun = mean,geom="point",shape=20,size=5,color="red",fill="red")+scale_x_discrete(labels=c("Sep","Oct","Nov","Dec","Jan"))
+
 
 #sleep time calculation
 sleep_grandmean <- round(mean(df$Sleep.Time.day),1)
-sleep_time_plot <- ggplot(df,aes(x=Month, y=Sleep.Time.day,fill=Month))+geom_boxplot(alpha=0.3)+theme(legend.position = "none")+scale_fill_brewer(palette = "Dark2")+ylab("Sleeping Time(in hour)")+geom_hline(aes(yintercept=sleep_grandmean),colour="#6666CC",lwd=1)+geom_text(aes(0,sleep_grandmean,label= paste("Average/day",sleep_grandmean,sep = ":"),vjust=2,hjust=0),colour="#6666FF")+stat_summary(fun = mean,geom="point",shape=20,size=5,color="red",fill="red")
+sleep_time_plot <- ggplot(df,aes(x=Month, y=Sleep.Time.day,fill=Month))+geom_boxplot(alpha=0.3)+theme(legend.position = "none")+scale_fill_brewer(palette = "Dark2")+ylab("Sleeping Time(in hour)")+geom_hline(aes(yintercept=sleep_grandmean),colour="#6666CC",lwd=1)+geom_text(aes(0,sleep_grandmean,label= paste("Average/day",sleep_grandmean,sep = ":"),vjust=2,hjust=0),colour="#6666FF")+stat_summary(fun = mean,geom="point",shape=20,size=5,color="red",fill="red")+scale_x_discrete(labels=c("Sep","Oct","Nov","Dec","Jan"))
+
 
 #plotting
 figure2 <- ggarrange(
@@ -176,7 +180,8 @@ prayer_plot <- ggplot(prayer, aes(y=Frequencypray, x=Prayer)) +
 
 # Phone time
 phone_grandmean <- round(mean(df$Phone.Time.in.mins.),1)
-phone_time_plot <- ggplot(df,aes(x=Month, y=Phone.Time.in.mins.,fill=Month))+geom_boxplot(alpha=0.3)+theme(legend.position = "none")+scale_fill_brewer(palette = "Dark2")+ylab("Phone Usage Time(in hour)")+geom_hline(aes(yintercept=phone_grandmean),colour="#6666CC",lwd=1)+geom_text(aes(0,phone_grandmean,label= paste("Average/day",phone_grandmean,sep = ":"),vjust=1,hjust=0),colour="#6666FF")+stat_summary(fun = mean,geom="point",shape=20,size=5,color="red",fill="red")
+phone_time_plot <- ggplot(df,aes(x=Month, y=Phone.Time.in.mins.,fill=Month))+geom_boxplot(alpha=0.3)+theme(legend.position = "none")+scale_fill_brewer(palette = "Dark2")+ylab("Phone Usage Time(in hour)")+geom_hline(aes(yintercept=phone_grandmean),colour="#6666CC",lwd=1)+geom_text(aes(0,phone_grandmean,label= paste("Average/day",phone_grandmean,sep = ":"),vjust=1,hjust=0),colour="#6666FF")+stat_summary(fun = mean,geom="point",shape=20,size=5,color="red",fill="red")+scale_x_discrete(labels=c("Sep","Oct","Nov","Dec","Jan"))
+
 
 #plotting
 figure3 <- ggarrange(
@@ -232,7 +237,7 @@ fig1
 
 ```{r,barplot of meditation&focus,fig.width=7}
 plot_1 <-ggplot(z, aes(fill=Meditation_Status, y=Count, x=Focus_Level)) +
-  geom_bar(position="dodge", stat="identity",colour="black")+theme_minimal() + geom_text(aes(label = paste(Count,"%",sep = "")), fontface = "bold", vjust = .5, position = position_dodge(0.9), size = 4)+scale_x_discrete(labels=c("<=10 mins","10 to 30 mins","30 to 60 mins","60 to 90 mins",">90 mins"))+xlab("Focus Time")+ylab("Percentage")+labs(title="EFFECT OF MEDITATION ON FOCUS TIME",caption = "Data Source:Bidit Personal Notion Database",tag = "Figure-1",fill="Meditation Done")+coord_flip()
+  geom_bar(position="dodge", stat="identity",colour="black")+theme_minimal() + geom_text(aes(label = paste(Count,"%",sep = "")), fontface = "bold", vjust = .5, position = position_dodge(0.9), size = 4)+scale_x_discrete(labels=c("<=10 mins","10 to 30 mins","30 to 60 mins","60 to 90 mins",">90 mins"))+xlab("Focus Time")+ylab("Percentage")+labs(title="MEDITATION & FOCUS TIME",caption = "Data Source:Bidit Personal Notion Database",tag = "Figure-1",fill="Meditation Done")+coord_flip()
 plot_1
 
 
@@ -277,7 +282,7 @@ fig3
 
 ```{r,Barplot of Exercise vs Focus time,fig.width=10}
 plot_2 <-ggplot(z1, aes(fill=Exercise_Status, y=Count, x=Focus_Level)) +
-  geom_bar(position="dodge", stat="identity",colour="black")+theme_minimal() + geom_text(aes(label = paste(Count,"%",sep = "")), fontface = "bold", vjust = .5, position = position_dodge(0.9), size = 4)+scale_x_discrete(labels=c("<=10 mins","10 to 30 mins","30 to 60 mins","60 to 90 mins",">90 mins"))+xlab("Focus Time")+ylab("Percentage")+labs(title="EFFECT OF EXERCISE ON FOCUS TIME",caption = "Data Source:Bidit Personal Notion Database",tag = "Figure-2",fill="Exercise Done")+coord_flip()
+  geom_bar(position="dodge", stat="identity",colour="black")+theme_minimal() + geom_text(aes(label = paste(Count,"%",sep = "")), fontface = "bold", vjust = .5, position = position_dodge(0.9), size = 4)+scale_x_discrete(labels=c("<=10 mins","10 to 30 mins","30 to 60 mins","60 to 90 mins",">90 mins"))+xlab("Focus Time")+ylab("Percentage")+labs(title="EXERCISE & FOCUS TIME",caption = "Data Source:Bidit Personal Notion Database",tag = "Figure-2",fill="Exercise Done")+coord_flip()
 plot_2
 ```
 
@@ -317,7 +322,7 @@ fig3
 
 ```{r,Barplot of Reading vs Focus Time,fig.width=7}
 plot_3 <-ggplot(z2, aes(fill=Reading_Status, y=Count, x=Focus_Level)) +
-  geom_bar(position="dodge", stat="identity",colour="black")+theme_minimal() + geom_text(aes(label = paste(Count,"%",sep = "")), fontface = "bold", vjust = .5, position = position_dodge(0.9), size = 4)+scale_x_discrete(labels=c("<=10 mins","10 to 30 mins","30 to 60 mins","60 to 90 mins",">90 mins"))+xlab("Focus Time")+ylab("Percentage")+labs(title="EFFECT OF READING ON FOCUS TIME",caption = "Data Source:Bidit Personal Notion Database",tag = "Figure-3",fill="Reading Done")+coord_flip()
+  geom_bar(position="dodge", stat="identity",colour="black")+theme_minimal() + geom_text(aes(label = paste(Count,"%",sep = "")), fontface = "bold", vjust = .5, position = position_dodge(0.9), size = 4)+scale_x_discrete(labels=c("<=10 mins","10 to 30 mins","30 to 60 mins","60 to 90 mins",">90 mins"))+xlab("Focus Time")+ylab("Percentage")+labs(title="READING & FOCUS TIME",caption = "Data Source:Bidit Personal Notion Database",tag = "Figure-3",fill="Reading Done")+coord_flip()
 plot_3
 ```
 
@@ -355,7 +360,7 @@ fig4
 ```
 ```{r,barplot of mindset vs focus time,fig.width=7}
 plot_4 <-ggplot(z3, aes(fill=Mindset_Status, y=Count, x=Focus_Level)) +
-  geom_bar(position="dodge", stat="identity",colour="black")+theme_minimal() + geom_text(aes(label = paste(Count,"%",sep = "")), fontface = "bold", vjust = .5, position = position_dodge(0.9), size = 4)+scale_x_discrete(labels=c("<=10 mins","10 to 30 mins","30 to 60 mins","60 to 90 mins",">90 mins"))+xlab("Focus Time")+ylab("Percentage")+labs(title="EFFECT OF MINDSET ON FOCUS TIME",caption = "Data Source:Bidit Personal Notion Database",tag = "Figure-4",fill="Mindset Positive")+coord_flip()
+  geom_bar(position="dodge", stat="identity",colour="black")+theme_minimal() + geom_text(aes(label = paste(Count,"%",sep = "")), fontface = "bold", vjust = .5, position = position_dodge(0.9), size = 4)+scale_x_discrete(labels=c("<=10 mins","10 to 30 mins","30 to 60 mins","60 to 90 mins",">90 mins"))+xlab("Focus Time")+ylab("Percentage")+labs(title="MINDSET & FOCUS TIME",caption = "Data Source:Bidit Personal Notion Database",tag = "Figure-4",fill="Mindset Positive")+coord_flip()
 plot_4
 ```
 
@@ -387,7 +392,7 @@ fig5 <- plot_ly(
     line = list(color = "black", width = 1),
     fill = list(color = c('rgb(235, 193, 238)', 'rgba(228, 222, 249, 0.65)')),
     font = list(family = "Arial", size = 12, color = c("black"))
-  ))
+  )) 
 
 fig5
 
@@ -395,7 +400,7 @@ fig5
 
 ```{r,barplot of Diet level vs focus time ,fig.width=10,fig.show='hide'}
 plot_5 <-ggplot(z4, aes(fill=Diet_Level, y=Count, x=Focus_Level)) +
-  geom_bar(position="dodge", stat="identity",colour="black")+theme_minimal() + geom_text(aes(label = paste(Count,"%",sep = "")), fontface = "bold", vjust = .5, position = position_dodge(0.9), size = 3)+scale_x_discrete(labels=c("<=10 mins","10 to 30 mins","30 to 60 mins","60 to 90 mins",">90 mins"))+xlab("Focus Time")+ylab("Percentage")+labs(title="EFFECT OF DIET LEVEL ON FOCUS TIME",caption = "Data Source:Bidit Personal Notion Database",tag = "Figure-5",fill="Diet Level(1=Worst,5=Best)")+coord_flip()
+  geom_bar(position="dodge", stat="identity",colour="black")+theme_minimal() + geom_text(aes(label = paste(Count,"%",sep = "")), fontface = "bold", vjust = .5, position = position_dodge(0.9), size = 3)+scale_x_discrete(labels=c("<=10 mins","10 to 30 mins","30 to 60 mins","60 to 90 mins",">90 mins"))+xlab("Focus Time")+ylab("Percentage")+labs(title="DIET & FOCUS TIME",caption = "Data Source:Bidit Personal Notion Database",tag = "Figure-5",fill="Diet Level(1=Worst,5=Best)")+coord_flip()
 plot_5
 ```
 
@@ -412,7 +417,7 @@ ggplot(data = df) +
   scale_fill_manual(values=c("#440145FF", "#404788FF", "#238A8DFF", "#55C667FF", "#FDE725FF"), 
                     name="Diet Levels",
                     breaks=c("1", "2", "3", "4", "5"),
-                    labels=c("1 - Worst", "2", "3", "4", "5 - Best")) +
+                    labels=c("1-Junk","2-Unbalanced","3-OK","4-Healthly","5-Balanced")) +
   theme_minimal() +
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank())
@@ -453,7 +458,7 @@ fig6
 
 ```{r,barplot of health condition vs focus time,fig.width=10,fig.height=8,fig.show='hide'}
 plot_6 <-ggplot(z5, aes(fill=Health_Condition, y=Count, x=Focus_Level)) +
-  geom_bar(position="dodge", stat="identity",colour="black")+theme_minimal() + geom_text(aes(label = paste(Count,"%",sep = "")), fontface = "bold", vjust = .5, position = position_dodge(0.9), size = 3)+scale_x_discrete(labels=c("<=10 mins","10 to 30 mins","30 to 60 mins","60 to 90 mins",">90 mins"))+xlab("Focus Time")+ylab("Percentage")+labs(title="EFFECT OF HEALTH CONDITION ON FOCUS TIME",caption = "Data Source:Bidit Personal Notion Database",tag = "Figure-6",fill="Health Condition(1=Worst,5=Best)")+coord_flip()
+  geom_bar(position="dodge", stat="identity",colour="black")+theme_minimal() + geom_text(aes(label = paste(Count,"%",sep = "")), fontface = "bold", vjust = .5, position = position_dodge(0.9), size = 3)+scale_x_discrete(labels=c("<=10 mins","10 to 30 mins","30 to 60 mins","60 to 90 mins",">90 mins"))+xlab("Focus Time")+ylab("Percentage")+labs(title="HEALTH CONDITION & FOCUS TIME",caption = "Data Source:Bidit Personal Notion Database",tag = "Figure-6",fill="Health Condition(1=Worst,5=Best)")+coord_flip()
 plot_6
 
 ```
@@ -472,14 +477,14 @@ ggplot(data = df) +
   scale_fill_manual(values=c("#440145FF", "#404788FF", "#238A8DFF", "#55C667FF", "#FDE725FF"), 
                     name="Health Condition",
                     breaks=c("1", "2", "3", "4", "5"),
-                    labels=c("1 - Worst", "2", "3", "4", "5 - Best")) +
+                    labels=c("1-Extremely Sick","2-Sick","3-OK","4-Good","5-Healthy,Energetic")) +
   theme_minimal() +
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank())
 ```
 
 ### Mood on Focus Time
-```{r,contingency table of mood on focus time}
+```{r,contingency table of mood on focus time,fig.width=7}
 
 q6 <- table(df$Focus.Level..1.worst.5.best.,df$Positivity..1.worst.5.best.)
 q6_prop <- round(prop.table(q6,margin = 2),2)*100
@@ -487,7 +492,7 @@ p6 <- addmargins(q6)
 rownames(p6) <- c("<=10min","10 to 30 mins","30 to 60 mins","60 to 90 mins",">90 mins","Sum")
 t6 <- as.matrix(p6)
 z6 <- data.frame(q6_prop)
-colnames(z6) <- c("Focus_Level","Health_Condition","Count")
+colnames(z6) <- c("Focus_Level","Mood","Count")
 
 fig7 <- plot_ly(
   type = 'table',
@@ -511,13 +516,15 @@ fig7 <- plot_ly(
 
 fig7
 ```
+
+
 ```{r,mosaic plot of mood on focus time,message=FALSE,warning=FALSE}
 ggplot(data = df) +
   geom_mosaic(aes(x = product(Positivity..1.worst.5.best., Focus.Level..1.worst.5.best.), fill = Positivity..1.worst.5.best.),
               ) + 
   labs(x = "Focus Level", 
        y = "Proportion", 
-       title="Focus Time by Mood",
+       title="Mood on Focus Time",
        subtitle = "Left - Right = (1) <10 mins - (5) >90 mins",
        caption = "Data Source:Bidit Notion Personal Database",
        tag="Fig-6") +
@@ -528,4 +535,63 @@ ggplot(data = df) +
   theme_minimal() +
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank())
+```
+
+
+### Drinking Water Consumption on Focus Time
+```{r,drinking water on focus time}
+water_consumption_focus <- ggplot(df,aes(x=Focus.Level..1.worst.5.best., y=Water.Consumption.in.litre.,fill=Focus.Level..1.worst.5.best.))+geom_boxplot(alpha=0.3)+theme(legend.position = "none")+scale_fill_brewer(palette = "Dark2")+ylab("Water Consumption(in litre)")+xlab("Focus Time")+scale_x_discrete(labels=c("<=10 mins","10 to 30 mins","30 to 60 mins","60 to 90 mins",">90 mins"))+labs(title="Water Consumption on Focus level",caption="Data Source:Bidit Personal Notion Database",subtitle="Figure-7")
+water_consumption_focus
+```
+
+**Kendalls Correlation for finding Association**
+```{r,Kendalls correlation for tied cases drinking water}
+
+df$Focus.Level..1.worst.5.best. <- as.numeric(df$Focus.Level..1.worst.5.best.)
+cor(df$Water.Consumption.in.litre.,df$Focus.Level..1.worst.5.best.,method = "kendall")
+
+```
+
+
+### Phone Usage on Focus Time
+```{r,phone usage boxplot}
+df$Focus.Level..1.worst.5.best. <- as.factor(df$Focus.Level..1.worst.5.best.)
+phone_usage <- ggplot(df,aes(x=Focus.Level..1.worst.5.best., y=Phone.Time.in.mins.,fill=Focus.Level..1.worst.5.best.))+geom_boxplot(alpha=0.3)+theme(legend.position = "none")+scale_fill_brewer(palette = "Dark2")+ylab("Phone Usage(in hr)")+xlab("Focus Time")+scale_x_discrete(labels=c("<=10 mins","10 to 30 mins","30 to 60 mins","60 to 90 mins",">90 mins"))+labs(title="Phone Usage Time on Focus level",caption="Data Source:Bidit Personal Notion Database",subtitle="Figure-8")
+
+phone_usage
+```
+
+**Kendalls Correlation for finding Association**
+```{r,Kendalls correlation for tied cases phone usage}
+df$Focus.Level..1.worst.5.best. <- as.numeric(df$Focus.Level..1.worst.5.best.)
+cor(df$Phone.Time.in.mins.,df$Focus.Level..1.worst.5.best.,method = "kendall")
+```
+
+### Sleep Time on Focus
+```{r,sleep time correlation kendall}
+df$Focus.Level..1.worst.5.best. <- as.factor(df$Focus.Level..1.worst.5.best.)
+sleep_time <- ggplot(df,aes(x=Focus.Level..1.worst.5.best., y=Sleep.Time.day,fill=Focus.Level..1.worst.5.best.))+geom_boxplot(alpha=0.3)+theme(legend.position = "none")+scale_fill_brewer(palette = "Dark2")+ylab("Sleep Time(in hr)")+xlab("Focus Time")+scale_x_discrete(labels=c("<=10 mins","10 to 30 mins","30 to 60 mins","60 to 90 mins",">90 mins"))+labs(title="Sleep Time on Focus level",caption="Data Source:Bidit Personal Notion Database",subtitle="Figure-9")
+
+sleep_time
+```
+
+**Kendalls Correlation for finding Association**
+```{r,Kendalls correlation for tied cases sleep}
+
+df$Focus.Level..1.worst.5.best. <- as.numeric(df$Focus.Level..1.worst.5.best.)
+cor(df$Sleep.Time.day,df$Focus.Level..1.worst.5.best.,method = "kendall")
+```
+
+### Workout Time on Focus
+```{r,warning=FALSE,message=FALSE}
+df$Focus.Level..1.worst.5.best. <- as.factor(df$Focus.Level..1.worst.5.best.)
+workout <- ggplot(df,aes(x=Focus.Level..1.worst.5.best., y=Workout.time.in.mins.,fill=Focus.Level..1.worst.5.best.))+geom_boxplot(alpha=0.3)+theme(legend.position = "none")+scale_fill_brewer(palette = "Dark2")+ylab("Workout Time(in hr)")+xlab("Focus Time")+scale_x_discrete(labels=c("<=10 mins","10 to 30 mins","30 to 60 mins","60 to 90 mins",">90 mins"))+labs(title="Workout Time on Focus level",caption="Data Source:Bidit Personal Notion Database",subtitle="Figure-10")
+
+workout
+```
+
+**Kendalls Correlation for finding Association**
+```{r,Kendalls correlation for tied cases workout time}
+df$Focus.Level..1.worst.5.best. <- as.numeric(df$Focus.Level..1.worst.5.best.)
+cor(df$Workout.time.in.mins.,df$Focus.Level..1.worst.5.best.,method = "kendall",use = "na.or.complete")
 ```
