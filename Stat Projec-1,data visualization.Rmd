@@ -1,6 +1,6 @@
 ---
 title: "What does Self Tracking reveal about me and my focus time ?"
-subtitle: "An extract of 113 days of my life"
+subtitle: "113 days of data collection on 27 important factors in my life"
 author: "Bidit Sadhukhan"
 date: "`r Sys.Date()`"
 output: 
@@ -24,7 +24,7 @@ library(patchwork)
 library(ggmosaic)
 ```
 
-## Importing Data
+# Importing Data
 ```{r,Importing Data}
 df <- read.csv("Bidit_Life_data_tracking.csv",header = T, stringsAsFactors = T )
 ```
@@ -41,6 +41,7 @@ df %<>%
 str(df)
 ```
 
+# Exploratory Data Analysis
 
 ## A short overview on my habits,health and mindset
 ###  Mindset,Mood & Focus
@@ -77,6 +78,14 @@ annotate_figure(figure, top = text_grob("Visualizing Mood,Mindset & Focus Time",
   fig.lab = "Figure 1", fig.lab.face = "bold"
   )
 ```
+
+
+#### Insights on Mindset, Focus and Mood
+
+- My Focus time is satisfactory where `r 33+4` out of 113 days,I have focused more than 1 hour.
+- I mostly have negative attitude towards most of the daily problems and difficulties that I have faced in this 113 days.
+- Although I have a negative mindset but my mood remained more or less OK.
+
 
 ### Health
 
@@ -118,6 +127,12 @@ annotate_figure(figure1, top = text_grob("Visualizing Health,Diet & Exercise",
 ```
 
 
+#### Insights on Diet, Exercise, Health Condition
+
+- My health condition shows a concern as I have been good and energetic for only 43 days also 34 days is OK with significant amount of fatigue and weakness in my body.
+- I have sincerely exercised for most of the days, 85 out of 113 days. 
+- The Diet level is OK with no so significant problems which I could find.
+
 
 ```{r,Water consumption,Avg Sleep,Workout time,workout time,fig.width=9,fig.height=8}
 #water consumption calculation
@@ -157,6 +172,13 @@ annotate_figure(figure2, top = text_grob("Visualizing Daily Essential Needs & Ac
   )
 
 ```
+
+#### Insights on Daily Needs and Activities
+
+- My average Drinking Water consumption per day is comparatively less than what an Indian male should consume according to experts(3-litre).
+- The monthly average of drinking water consumption per day except for September is is more or less OK. 
+- On an average I have exercised for at least an hour per day which is a good sign for me. The monthly workout time also gives a positive look.
+- Average sleeping time per day is 7.1  hours per day which is a little less than what an average person need (8 hours). But there is no such bigger concern as I can see from the boxplot.
 
 ### Hobbies & Extra-Curricular Activities
 ```{r,meditation-reading-phone time-morning prayer,fig.width=9,fig.height=8}
@@ -199,8 +221,15 @@ annotate_figure(figure3, top = text_grob("Visualizing Daily Essential Needs & Ac
   )
 ```
 
+#### Insights on Phone Usage time , Meditation and Reading
+
+- My phone usage time is 2.4 hours per day, which I cannot complain as most of my books are also there. But there is not so much to be concerned about as the max value of phone usage is less than 5 hours. In case of October I have greater phone usage time compared to other months.
+- I have sincerely meditated for 76 days out of 113 days which is good.
+-  In case of reading as we can see from the bar plot, I have read only for 13 days out of 113 days, which I seem to have totally neglected.
+
 ## Activities,Health & Mindset  on Focus Time
 ### Meditation on Focus Time
+
 ```{r,Building the contingency tables for Meditation,fig.width=5,fig.height=5}
 q <- table(df$Focus.Level..1.worst.5.best.,df$Meditation)
 q_prop <- round(prop.table(q,margin = 2),2)*100
@@ -234,6 +263,8 @@ fig1
 
 ```
 
+ 
+
 
 ```{r,barplot of meditation&focus,fig.width=7}
 plot_1 <-ggplot(z, aes(fill=Meditation_Status, y=Count, x=Focus_Level)) +
@@ -243,6 +274,11 @@ plot_1
 
 
 ```
+
+#### Insights of Exercise on Focus Time
+
+- From Figure-1 bar plot of meditation & Focus Time,  the plot shows, that for focus time greater than 30 mins I have a greater percentage that I have meditated.
+ 
 
 ### Exercise on Focus Time
 
@@ -287,6 +323,10 @@ plot_2
 ```
 
 
+#### Insights of Exercise on Focus time
+
+- I cannot conclude much from this plot.
+
 ### Reading on Focus Time
 ```{r,Focus time vs Reading contingency table,fig.width=7}
 q2 <- table(df$Focus.Level..1.worst.5.best.,df$Reading..Doesn.t.include.Studying.)
@@ -326,6 +366,10 @@ plot_3 <-ggplot(z2, aes(fill=Reading_Status, y=Count, x=Focus_Level)) +
 plot_3
 ```
 
+#### Insights of Reading on Focus Time
+ 
+-  This plot shows how focus time is varying based on if I have read a book or not that day.
+
 ### Mindset on Focus time
 ```{r,contingency table for mindset vs focus time,fig.width=7}
 q3 <- table(df$Focus.Level..1.worst.5.best.,df$Mindset.Motivated.Yes.Lazy.No.)
@@ -363,6 +407,9 @@ plot_4 <-ggplot(z3, aes(fill=Mindset_Status, y=Count, x=Focus_Level)) +
   geom_bar(position="dodge", stat="identity",colour="black")+theme_minimal() + geom_text(aes(label = paste(Count,"%",sep = "")), fontface = "bold", vjust = .5, position = position_dodge(0.9), size = 4)+scale_x_discrete(labels=c("<=10 mins","10 to 30 mins","30 to 60 mins","60 to 90 mins",">90 mins"))+xlab("Focus Time")+ylab("Percentage")+labs(title="MINDSET & FOCUS TIME",caption = "Data Source:Bidit Personal Notion Database",tag = "Figure-4",fill="Mindset Positive")+coord_flip()
 plot_4
 ```
+#### Insights of Mindset on Focus time
+
+- The plot shows how the focus time is distributed based on the mindset of that day.
 
 ### Diet on Focus time
 ```{r,Diet levels and Focus time,fig.width=7}
@@ -423,6 +470,10 @@ ggplot(data = df) +
         panel.grid.minor = element_blank())
 ```
 
+#### Insights of Diet Level on Focus time
+
+- The mosaic plot shows us how the with the change of diet the focus time has varied.
+
 ### Health Condition on Focus Time
 ```{r,contingency table of health condition vs Focus Level}
 q5 <- table(df$Focus.Level..1.worst.5.best.,df$Health.Condition..5.Best..1.worst.)
@@ -464,7 +515,7 @@ plot_6
 ```
 
 
-```{r,message=FALSE,warning=FALSE}
+```{r,mosaic plot of health condition on focus time,message=FALSE,warning=FALSE}
 ggplot(data = df) +
   geom_mosaic(aes(x = product(Health.Condition..5.Best..1.worst., Focus.Level..1.worst.5.best.), fill = Health.Condition..5.Best..1.worst.),
               na.rm=TRUE) + 
@@ -482,6 +533,10 @@ ggplot(data = df) +
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank())
 ```
+
+#### Insights of Health condition on Focus time
+
+- The mosaic plot shows how the focus time has varied over the health condition of mine.
 
 ### Mood on Focus Time
 ```{r,contingency table of mood on focus time,fig.width=7}
@@ -537,6 +592,8 @@ ggplot(data = df) +
         panel.grid.minor = element_blank())
 ```
 
+#### Insights of Mood on Focus time
+- The mosaic plot shows how the focus time has been distributed on the levels based on the mood of that day.
 
 ### Drinking Water Consumption on Focus Time
 ```{r,drinking water on focus time}
@@ -552,6 +609,8 @@ cor(df$Water.Consumption.in.litre.,df$Focus.Level..1.worst.5.best.,method = "ken
 
 ```
 
+#### Insights Of water consumption on Focus time
+- There seems to a very weak positive association between drinking water consumption and Focus time
 
 ### Phone Usage on Focus Time
 ```{r,phone usage boxplot}
@@ -566,6 +625,9 @@ phone_usage
 df$Focus.Level..1.worst.5.best. <- as.numeric(df$Focus.Level..1.worst.5.best.)
 cor(df$Phone.Time.in.mins.,df$Focus.Level..1.worst.5.best.,method = "kendall")
 ```
+
+#### Insights on Phone Usage on Focus time
+- There seems to be very weak negative association between phone usage time and focus time.
 
 ### Sleep Time on Focus
 ```{r,sleep time correlation kendall}
@@ -582,6 +644,9 @@ df$Focus.Level..1.worst.5.best. <- as.numeric(df$Focus.Level..1.worst.5.best.)
 cor(df$Sleep.Time.day,df$Focus.Level..1.worst.5.best.,method = "kendall")
 ```
 
+#### Insights on Sleep time on Focus
+- There seems to be a very weak negative association between sleep time and focus time.
+
 ### Workout Time on Focus
 ```{r,warning=FALSE,message=FALSE}
 df$Focus.Level..1.worst.5.best. <- as.factor(df$Focus.Level..1.worst.5.best.)
@@ -595,3 +660,14 @@ workout
 df$Focus.Level..1.worst.5.best. <- as.numeric(df$Focus.Level..1.worst.5.best.)
 cor(df$Workout.time.in.mins.,df$Focus.Level..1.worst.5.best.,method = "kendall",use = "na.or.complete")
 ```
+
+#### Insights on Workout time on Focus time
+- There seems to be a weak positive association between workout time and focus time.
+
+## What I have learnt in overall ?
+
+- Overall my focus time has not been too much of concern in the 113 days it is more or less good.
+- My focus time has significantly weak negative association with sleep time and phone usage time, whereas a weak positive association with workout time and drinking water consumption.
+- I am mostly a negative minded minded person though my mood shows little to very little effects.
+- I need to take care of my health seriously as it shows a significant concern.But hopefully I have seriously exercised daily, maintained good diet and sleep time.
+- I am not so serious in my reading and extracurricular,I have read only for 13 days.  
