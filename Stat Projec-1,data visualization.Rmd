@@ -10,6 +10,8 @@ output:
     theme: readable
     fig_caption: yes
     number_sections: yes
+editor_options: 
+  chunk_output_type: console
 ---
 ```{r,results='hide',message=FALSE}
 library(knitr)
